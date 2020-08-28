@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 namespace ESKF_Localization{
 
@@ -10,6 +11,9 @@ struct ImuData{
 
 	Eigen::Vector3d accel;		//Unit: m/s^2
 	Eigen::Vector3d gyro;		//Unit: rad/s
+
+	Eigen::Quaterniond quat;	//Orientation estimation from IMU. For example, DMP.
+	Eigen::Quaterniond last_quat;
 };
 using ImuDataPtr = std::shared_ptr<ImuData>;
 
