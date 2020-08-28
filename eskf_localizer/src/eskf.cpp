@@ -3,6 +3,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <ros/console.h>
 
 namespace ESKF_Localization{
 
@@ -14,6 +15,7 @@ namespace ESKF_Localization{
 		state->G_v_I = old_state.G_v_I + dt * (old_state.G_R_I * (imu_data->accel - old_state.ab) + g);
 
 		if (imu_data->quat.norm() != 0 && imu_data->last_quat.norm() != 0){
+			ROS_INFO("Updating orientation by quaternion");
 			//quaternion valid, update orientation according to delta quaternion
 			Eigen::Matrix3d d_rot(imu_data->last_quat.inverse() * imu_data->quat);
 

@@ -1,8 +1,8 @@
 <launch>
-    <param name="am_noise"      type="double" value="1e-2" />
-    <param name="wm_noise"      type="double" value="1e-4" />
-    <param name="ab_noise"  	type="double" value="1e-6" />
-    <param name="wb_noise" 		type="double" value="1e-8" />
+    <param name="am_noise"      type="double" value="3e-1" />
+    <param name="wm_noise"      type="double" value="3e-3" />
+    <param name="ab_noise"  	type="double" value="3e-6" />
+    <param name="wb_noise" 		type="double" value="3e-6" />
 
     <param name="I_p_Gps_x"       type="double" value="0.0" />
     <param name="I_p_Gps_y"       type="double" value="0.0" />
