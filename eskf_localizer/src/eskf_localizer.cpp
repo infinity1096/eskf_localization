@@ -18,7 +18,7 @@ namespace ESKF_Localization{
 		state_.ab = Eigen::Vector3d::Zero();
 		state_.wb = Eigen::Vector3d::Zero();
 
-		initializer_ = std::make_unique<Initializer>(10,10,10,&state_);
+		initializer_ = std::make_unique<Initializer>(100,100,100,&state_);
 		Eigen::Vector3d g(0,0,-9.81);
 		imu_processor_ = std::make_unique<ImuProcessor>(am_noise,wm_noise,ab_noise,wb_noise,g);
 		gps_processor_ = std::make_unique<GpsProcessor>(I_p_Gps);

@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include "eskf_localizer/eskf_localizer.h"
 
+#include <geometry_msgs/Vector3Stamped.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <sensor_msgs/MagneticField.h>
@@ -16,7 +17,7 @@ public:
 
     void ImuCallback(const sensor_msgs::ImuConstPtr& imu_msg_ptr);
     void GpsPositionCallback(const sensor_msgs::NavSatFixConstPtr& gps_msg_ptr);
-    void MagCallback(const sensor_msgs::MagneticFieldConstPtr& mag_msg_ptr);
+    void MagCallback(const geometry_msgs::Vector3StampedConstPtr& mag_msg_ptr);
 
 private:
 

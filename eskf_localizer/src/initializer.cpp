@@ -96,6 +96,7 @@ void Initializer::Mag_initialize(ESKF_Localization::MagDataPtr mag_data){
 		//update state
 		state_->G_R_I = I_R_G.transpose();
 
+
 		//FIXME
 		Eigen::Quaterniond q(state_->G_R_I);
 		ROS_INFO("[Initializer] Orientation initialized with q: w:%f, x:%f, y:%f, z:%f",q.w(),q.x(),q.y(),q.z());

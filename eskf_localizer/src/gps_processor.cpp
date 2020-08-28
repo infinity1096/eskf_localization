@@ -20,7 +20,8 @@ void GpsProcessor::Gps_correct(const GpsPositionDataPtr GpsData, State* state){
 	Eigen::Vector3d z;
 	ConvertLLAToENU(state->lla_origin, GpsData->lla, &z);
 
-	ROS_INFO("z = %f,%f,%f",z.x(),z.y(),z.z());
+	Eigen::Vector3d z_sim(z.y(),-z.x(),z.z());
+	ROS_INFO("z = %f,%f,%f",z.y(),-z.x(),z.z());//modified for simulation
 
 	Eigen::Vector3d h_x = state->G_p_I + state->G_R_I * I_p_Gps_;
 
@@ -32,6 +33,6 @@ void GpsProcessor::Gps_correct(const GpsPositionDataPtr GpsData, State* state){
 	Eigen::Matrix3d V;
 	V << 1.5,0,0,0,1.5,0,0,0,4.0;
 
-	ESKF_correct(z,h_x,H,V,state);
+	ESKF_correct(z_sim,h_x,H,V,state);
 }
 }
