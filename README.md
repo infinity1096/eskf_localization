@@ -1,7 +1,7 @@
 # eskf_localization
 
 ## Description
-ROS implementation of the Error State Kalman Filter according to Quaternion kinematics for the error-state Kalman filter by Joan Solà. 
+ROS implementation of the Error State Kalman Filter according to *Quaternion kinematics for the error-state Kalman filter* by Joan Solà. 
 Full text can be obtained [here](https://arxiv.org/abs/1711.02508).
 
 Node fuses information from IMU, GPS, and magnetometer, publishes fused pose.
