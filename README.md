@@ -1,5 +1,7 @@
 # eskf_localization
 
+![Fused Path](https://github.com/infinity1096/eskf_localization/blob/master/ros_wrapper/pictures/rviz_screenshot_2020_08_29-19_44_14.png)
+
 ## Description
 ROS implementation of the Error State Kalman Filter according to *Quaternion kinematics for the error-state Kalman filter* by Joan Solà. 
 Full text can be obtained [here](https://arxiv.org/abs/1711.02508).
