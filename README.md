@@ -14,6 +14,11 @@ For more details, consult: https://zhuanlan.zhihu.com/c_1266722926339645440
 ```
 roslaunch eskf_localization eskf_localization.launch
 ```
+On another terminal,
+```
+rosbag play utbm_robocar_dataset_20180719_noimage.bag
+```
+
 ## Reference
 - https://zhuanlan.zhihu.com/p/152662055
 - dataset: https://epan-utbm.github.io/utbm_robocar_dataset/
