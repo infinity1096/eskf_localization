@@ -22,7 +22,7 @@ namespace ESKF_Localization{
 		Eigen::Vector3d g(0,0,-9.81);
 		imu_processor_ = std::make_unique<ImuProcessor>(am_noise,wm_noise,ab_noise,wb_noise,g);
 		gps_processor_ = std::make_unique<GpsProcessor>(I_p_Gps);
-		mag_processor_ = std::make_unique<MagProcessor>(0.5*Eigen::Matrix3d::Identity());
+		mag_processor_ = std::make_unique<MagProcessor>(0.7*Eigen::Matrix3d::Identity());
 		last_t_ = ros::Time::now().toSec();
 	}
 

@@ -5,9 +5,6 @@
 
 #include <Eigen/Core>
 
-//FIXME Only for testing
-#include <ros/console.h>
-
 
 namespace ESKF_Localization{
 
@@ -19,8 +16,6 @@ void GpsProcessor::Gps_correct(const GpsPositionDataPtr GpsData, State* state){
 
 	Eigen::Vector3d z;
 	ConvertLLAToENU(state->lla_origin, GpsData->lla, &z);
-
-	ROS_INFO("z = %f,%f,%f",z.x(),z.y(),z.z());
 
 	Eigen::Vector3d h_x = state->G_p_I + state->G_R_I * I_p_Gps_;
 

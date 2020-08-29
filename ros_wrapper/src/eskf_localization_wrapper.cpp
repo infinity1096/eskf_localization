@@ -29,9 +29,9 @@ ESKFLocalizationWrapper::ESKFLocalizationWrapper(ros::NodeHandle nh){
 	eskf_localizer_ = std::make_unique<ESKF_Localization::ESKF_Localizer>(
 			am_noise,wm_noise, ab_noise, wb_noise, I_p_Gps);
 
-	imu_sub_ = nh.subscribe("/imu",10,&ESKFLocalizationWrapper::ImuCallback,this);
+	imu_sub_ = nh.subscribe("/imu/data",10,&ESKFLocalizationWrapper::ImuCallback,this);
 	gps_sub_ = nh.subscribe("/fix",10,&ESKFLocalizationWrapper::GpsPositionCallback,this);
-	mag_sub_ = nh.subscribe("/mag",10,&ESKFLocalizationWrapper::MagCallback,this);
+	mag_sub_ = nh.subscribe("/imu/mag",10,&ESKFLocalizationWrapper::MagCallback,this);
 
 	fused_pose_pub_ = nh.advertise<geometry_msgs::Pose>("/fused_pose", 10);
 	fused_path_pub_ = nh.advertise<nav_msgs::Path>("/fused_path", 10);
