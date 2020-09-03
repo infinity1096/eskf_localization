@@ -55,7 +55,7 @@ namespace ESKF_Localization{
 			return;
 		}
 
-		//mag_processor_->Mag_correct(mag_data,&state_);
+		mag_processor_->Mag_correct(mag_data,&state_);
 	}
 
 	State* ESKF_Localizer::getState(){

@@ -22,9 +22,7 @@ void MagProcessor::Mag_correct(const MagDataPtr MagData, State* state){
 	Eigen::Quaterniond q(state->G_R_I);
 
 	Eigen::Matrix<double,3,15> H = Eigen::Matrix<double,3,15>::Zero();
-	Eigen::Matrix<double,4,3> temp;
-	temp << Eigen::Matrix<double,1,3>::Zero(), 0.5*Eigen::Matrix3d::Identity();
-	H.block<3,3>(0,6) = diff_qT_a_q_diff_q(q,state->m_ref) * quat_l(q) * temp;
+	H.block<3,3>(0,6) = hat(state->G_R_I.transpose() * state->m_ref);
 
 	ESKF_correct(z,h_x,H,V_,state);
 }
