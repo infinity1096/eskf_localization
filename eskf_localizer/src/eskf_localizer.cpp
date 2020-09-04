@@ -8,7 +8,7 @@
 #include <geometry_msgs/Pose.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <nav_msgs/Odometry.h>
-
+#include <memory>
 #include <ros/console.h>
 
 namespace ESKF_Localization{
@@ -25,6 +25,7 @@ namespace ESKF_Localization{
 		imu_processor_ = std::make_unique<ImuProcessor>(am_noise,wm_noise,ab_noise,wb_noise,g);
 		gps_processor_ = std::make_unique<GpsProcessor>(I_p_Gps);
 		mag_processor_ = std::make_unique<MagProcessor>(0.5*Eigen::Matrix3d::Identity());
+		pt_processor_ = std::make_unique<PTProcessor>();
 		last_t_ = ros::Time::now().toSec();
 	}
 
@@ -58,6 +59,24 @@ namespace ESKF_Localization{
 		}
 
 		mag_processor_->Mag_correct(mag_data,&state_);
+	}
+
+	void ESKF_Localizer::processPressureData(PressureDataPtr pressure_data){
+		if(!initializer_->is_initialized()){
+			initializer_->Pressure_initialize(pressure_data);
+			return;
+		}
+
+		pt_processor_->recordPressure(pressure_data, &state_);
+	}
+
+	void ESKF_Localizer::processTempData(TempDataPtr temp_data){
+		if (!initializer_->is_initialized()){
+			initializer_->Temp_initialize(temp_data);
+			return;
+		}
+
+		pt_processor_->recordTemperature(temp_data, &state_);
 	}
 
 	State* ESKF_Localizer::getState(){

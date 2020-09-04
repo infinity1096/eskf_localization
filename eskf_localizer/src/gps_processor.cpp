@@ -13,12 +13,15 @@ namespace ESKF_Localization{
 
 GpsProcessor::GpsProcessor(Eigen::Vector3d I_p_Gps){
 	GpsProcessor::I_p_Gps_ = I_p_Gps;
+	air_pressure_filter_ = std::make_unique<AirpressureFilter>(0.05);
 }
 
 void GpsProcessor::Gps_correct(const GpsPositionDataPtr GpsData, State* state){
 
 	Eigen::Vector3d z;
 	ConvertLLAToENU(state->lla_origin, GpsData->lla, &z);
+
+	air_pressure_filter_->correctHeight(&z, state);
 
 	ROS_INFO("z = %f,%f,%f",z.x(),z.y(),z.z());
 

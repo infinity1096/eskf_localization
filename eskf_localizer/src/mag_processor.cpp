@@ -56,6 +56,6 @@ void MagProcessor::Mag_correct(const MagDataPtr MagData, State* state){
 
 	state->G_R_I = q0.slerp(0.03,q1).normalized().toRotationMatrix();
 
-	//state->P.block<3,3>(6,6) *= 0.999;	//avoid accumulation of orientation uncertainty
+	state->P.block<3,3>(6,6) *= 0.999;	//avoid accumulation of orientation uncertainty
 }
 }

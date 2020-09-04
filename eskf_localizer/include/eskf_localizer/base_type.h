@@ -12,7 +12,8 @@ struct ImuData{
 	Eigen::Vector3d accel;		//Unit: m/s^2
 	Eigen::Vector3d gyro;		//Unit: rad/s
 
-	Eigen::Quaterniond quat;	//Orientation estimation from IMU. For example, DMP.
+	Eigen::Quaterniond quat;	//Orientation estimation from IMU. For example, the DMP
+								//feature of MPU6050/9250. Optional.
 };
 using ImuDataPtr = std::shared_ptr<ImuData>;
 
@@ -27,9 +28,23 @@ using GpsPositionDataPtr = std::shared_ptr<GpsPositionData>;
 struct MagData{
 	double timestamp;			//Unit: Seconds
 
-	Eigen::Vector3d mag;		//Unit: uT
+	Eigen::Vector3d mag;		//Unit: Gauss
 };
 using MagDataPtr = std::shared_ptr<MagData>;
+
+struct TempData{
+	double timestamp;			//Unit: Seconds
+
+	double celsius;				//Celsius temperature
+};
+using TempDataPtr = std::shared_ptr<TempData>;
+
+struct PressureData{
+	double timestamp;			//Unit: Seconds
+
+	double pressure;			//Unit: mBar
+};
+using PressureDataPtr = std::shared_ptr<PressureData>;
 
 struct State{
 	double timestamp;
@@ -48,6 +63,13 @@ struct State{
 
 	Eigen::Vector3d m_ref;
 	//megnetic field reference
+
+	double p0;//sea-level pressure at lla_init with local air condition
+	double last_pressure_height;//last altitude calculated from air pressure and temperature
+	double height_filtered;//Complementary filter
+
+	double pressure;
+	double tempreature;//current temperature
 
 	Eigen::Quaterniond last_quat;
 	//last quaternion

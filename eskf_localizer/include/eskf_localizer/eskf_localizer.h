@@ -5,6 +5,7 @@
 #include "eskf_localizer/imu_processor.h"
 #include "eskf_localizer/gps_processor.h"
 #include "eskf_localizer/mag_processor.h"
+#include "eskf_localizer/pt_processor.h"
 
 #include <Eigen/Core>
 
@@ -22,6 +23,8 @@ public:
 	void processImuData(ImuDataPtr imu_data);
 	void processGpsData(GpsPositionDataPtr gps_data);
 	void processMagData(MagDataPtr mag_data);
+	void processPressureData(PressureDataPtr pressure_data);
+	void processTempData(TempDataPtr temp_data);
 
 	State* getState();
 	geometry_msgs::Pose getFusedPose();
@@ -34,6 +37,7 @@ private:
 	std::unique_ptr<ImuProcessor> imu_processor_;
 	std::unique_ptr<GpsProcessor> gps_processor_;
 	std::unique_ptr<MagProcessor> mag_processor_;
+	std::unique_ptr<PTProcessor> pt_processor_;
 
 	State state_;
 

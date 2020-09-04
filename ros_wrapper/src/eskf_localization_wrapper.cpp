@@ -32,6 +32,9 @@ ESKFLocalizationWrapper::ESKFLocalizationWrapper(ros::NodeHandle nh){
 	imu_sub_ = nh.subscribe("/imu",10,&ESKFLocalizationWrapper::ImuCallback,this);
 	gps_sub_ = nh.subscribe("/fix",10,&ESKFLocalizationWrapper::GpsPositionCallback,this);
 	mag_sub_ = nh.subscribe("/mag",10,&ESKFLocalizationWrapper::MagCallback,this);
+	pressure_sub_ = nh.subscribe("/air_pressure",10,&ESKFLocalizationWrapper::PressureCallback,this);
+	temperature_sub_ = nh.subscribe("/temperature",10,&ESKFLocalizationWrapper::TempCallback,this);
+
 
 	fused_pose_pub_ = nh.advertise<geometry_msgs::Pose>("/fused_pose", 10);
 	fused_path_pub_ = nh.advertise<nav_msgs::Path>("/fused_path", 10);
@@ -89,6 +92,20 @@ void ESKFLocalizationWrapper::MagCallback(const sensor_msgs::MagneticFieldConstP
 
 	eskf_localizer_->processMagData(mag_data_ptr);
 	publishState();
+}
+
+void ESKFLocalizationWrapper::PressureCallback(const sensor_msgs::FluidPressureConstPtr& pressure_msg_ptr){
+	ESKF_Localization::PressureDataPtr pressure_data_ptr = std::make_shared<ESKF_Localization::PressureData>();
+	pressure_data_ptr->timestamp = ros::Time::now().toSec();
+	pressure_data_ptr->pressure = pressure_msg_ptr->fluid_pressure;
+	eskf_localizer_->processPressureData(pressure_data_ptr);
+}
+
+void ESKFLocalizationWrapper::TempCallback(const sensor_msgs::TemperatureConstPtr& temperature_msg_ptr){
+	ESKF_Localization::TempDataPtr temperature_data_ptr = std::make_shared<ESKF_Localization::TempData>();
+	temperature_data_ptr->timestamp = ros::Time::now().toSec();
+	temperature_data_ptr->celsius = temperature_msg_ptr->temperature;
+	eskf_localizer_->processTempData(temperature_data_ptr);
 }
 
 void ESKFLocalizationWrapper::addStateToPath(ESKF_Localization::State* state){

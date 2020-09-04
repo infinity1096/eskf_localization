@@ -21,7 +21,9 @@ add_library(eskf_localizer_lib
   src/eskf.cpp
   src/imu_processor.cpp
   src/gps_processor.cpp
+  src/airpressure_filter.cpp
   src/mag_processor.cpp
+  src/pt_processor.cpp
   src/initializer.cpp
 )
 

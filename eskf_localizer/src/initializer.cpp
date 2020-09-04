@@ -2,7 +2,7 @@
 #include "eskf_localizer/base_type.h"
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
+#include <math.h>
 //FIXME
 #include <ros/console.h>
 
@@ -111,8 +111,65 @@ void Initializer::Mag_initialize(ESKF_Localization::MagDataPtr mag_data){
 
 }
 
+void Initializer::Pressure_initialize(ESKF_Localization::PressureDataPtr pressure_data){
+	if (!got_first_gps_message_ || pressure_initialized_){
+		return;
+	}
+
+	pressure_buffer_.push_back(pressure_data);
+	if (pressure_buffer_.size() > pressure_initialize_goal_){
+		pressure_buffer_.pop_front();
+	}
+
+	if (pressure_buffer_.size() == pressure_initialize_goal_ && gps_initialized_ && temperature_initialized_){
+		//pressure, temperature, GPS height initialized. ready to compute p0
+		double celsius = 0;
+		double air_pressure = 0;
+		double GPS_height = state_->lla_origin.z();
+
+		for (PressureDataPtr pressure_data_point : pressure_buffer_){
+			air_pressure += pressure_data_point->pressure;
+		}
+		air_pressure /= pressure_initialize_goal_;
+
+		for (TempDataPtr temperature_data_point : temperature_buffer_){
+			celsius += temperature_data_point->celsius;
+		}
+		celsius /= temperature_initialize_goal_;
+
+		ROS_INFO("[Initializer] initialized with pressure = %f mBar, temperature = %f Celsius",air_pressure, celsius);
+
+		//https://keisan.casio.com/exec/system/1224585971
+		state_->p0 = pow(0.0065*GPS_height/(celsius + 273.15) + 1, 5.257) * air_pressure;
+
+		ROS_INFO("[Initializer] calculated p0 = %f mBar", state_->p0);
+		//initialize complementry filter
+		state_->last_pressure_height = GPS_height;
+		state_->height_filtered = GPS_height;
+
+		//initial pressure temperature readings
+		state_->pressure = air_pressure;
+		state_->tempreature = celsius;
+
+		pressure_initialized_ = true;
+	}
+
+}
+
+void Initializer::Temp_initialize(ESKF_Localization::TempDataPtr temp_data){
+	if (!got_first_gps_message_ || temperature_initialized_){
+		return;
+	}
+
+	temperature_buffer_.push_back(temp_data);
+	if (temperature_buffer_.size() == temperature_initialize_goal_){
+		temperature_initialized_ = true;
+	}
+}
+
 bool Initializer::is_initialized(){
-	eskf_initialized_ = imu_initialized_ && gps_initialized_ && mag_initialized_;
+	eskf_initialized_ = imu_initialized_ && gps_initialized_ && mag_initialized_
+			&& pressure_initialized_ && temperature_initialized_;
 
 	return eskf_initialized_;
 }
