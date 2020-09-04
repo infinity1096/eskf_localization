@@ -17,18 +17,19 @@ MagProcessor::MagProcessor(Eigen::Matrix3d V){
 }
 
 void MagProcessor::Mag_correct(const MagDataPtr MagData, State* state){
-	Eigen::Vector3d z = MagData->mag;
+
+	Eigen::Vector3d z = MagData->mag.normalized();
 	/*
-	Eigen::Vector3d h_x = state->G_R_I.transpose() * state->m_ref;
+	Eigen::Vector3d h_x = state->G_R_I.transpose() * state->m_ref.normalized();
 	Eigen::Quaterniond q(state->G_R_I);
 
 	Eigen::Matrix<double,3,15> H = Eigen::Matrix<double,3,15>::Zero();
 	Eigen::Matrix<double,4,3> temp;
-	temp << Eigen::Matrix<double,1,3>::Zero(), 0.5*Eigen::Matrix3d::Identity();
-	H.block<3,3>(0,6) = diff_qT_a_q_diff_q(q,state->m_ref) * quat_l(q) * temp;
+	H.block<3,3>(0,6) = hat(state->G_R_I.transpose() * (z.normalized()));
 
 	ESKF_correct(z,h_x,H,V_,state);
-	*/
+*/
+
 
 	Eigen::Vector3d g_ref = state->G_R_I.transpose() * Eigen::Vector3d(0,0,-9.81);
 
@@ -50,8 +51,11 @@ void MagProcessor::Mag_correct(const MagDataPtr MagData, State* state){
 	//SLERP between state orientation and calculated absolute orientation
 	Eigen::Quaterniond q0(state->G_R_I);
 	Eigen::Quaterniond q1(G_R_I_mag);
-	state->G_R_I = q0.slerp(0.01,q1).toRotationMatrix();
 
+	ROS_INFO("q1 = %f,%f,%f,%f",q1.w(),q1.x(),q1.y(),q1.z());
 
+	state->G_R_I = q0.slerp(0.03,q1).normalized().toRotationMatrix();
+
+	//state->P.block<3,3>(6,6) *= 0.999;	//avoid accumulation of orientation uncertainty
 }
 }

@@ -13,7 +13,6 @@ struct ImuData{
 	Eigen::Vector3d gyro;		//Unit: rad/s
 
 	Eigen::Quaterniond quat;	//Orientation estimation from IMU. For example, DMP.
-	Eigen::Quaterniond last_quat;
 };
 using ImuDataPtr = std::shared_ptr<ImuData>;
 
@@ -49,6 +48,9 @@ struct State{
 
 	Eigen::Vector3d m_ref;
 	//megnetic field reference
+
+	Eigen::Quaterniond last_quat;
+	//last quaternion
 
 	Eigen::Matrix<double,15,15> P;	//Covariance of the error state
 };

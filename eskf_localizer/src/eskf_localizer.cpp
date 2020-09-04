@@ -9,6 +9,8 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <nav_msgs/Odometry.h>
 
+#include <ros/console.h>
+
 namespace ESKF_Localization{
 	ESKF_Localizer::ESKF_Localizer(const double am_noise, const double wm_noise,
 			const double ab_noise, const double wb_noise, Eigen::Vector3d I_p_Gps){
@@ -18,8 +20,8 @@ namespace ESKF_Localization{
 		state_.ab = Eigen::Vector3d::Zero();
 		state_.wb = Eigen::Vector3d::Zero();
 
-		initializer_ = std::make_unique<Initializer>(10,10,10,&state_);
-		Eigen::Vector3d g(0,0,-9.81);
+		initializer_ = std::make_unique<Initializer>(20,20,20,&state_);
+		Eigen::Vector3d g(0,0,-9.95);
 		imu_processor_ = std::make_unique<ImuProcessor>(am_noise,wm_noise,ab_noise,wb_noise,g);
 		gps_processor_ = std::make_unique<GpsProcessor>(I_p_Gps);
 		mag_processor_ = std::make_unique<MagProcessor>(0.5*Eigen::Matrix3d::Identity());
@@ -36,7 +38,7 @@ namespace ESKF_Localization{
 		double dt = t - last_t_;
 		last_t_ = t;
 		if (dt >= 0.5 || dt <= 0){dt = 0.01;}
-
+		//ROS_INFO("received quat from DMP = %f,%f,%f,%f", imu_data->quat.w(),imu_data->quat.x(),imu_data->quat.y(),imu_data->quat.z());
 		imu_processor_->Imu_predict(imu_data,dt,&state_);
 	}
 
@@ -55,7 +57,7 @@ namespace ESKF_Localization{
 			return;
 		}
 
-		//mag_processor_->Mag_correct(mag_data,&state_);
+		mag_processor_->Mag_correct(mag_data,&state_);
 	}
 
 	State* ESKF_Localizer::getState(){

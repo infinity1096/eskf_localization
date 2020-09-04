@@ -14,10 +14,12 @@ namespace ESKF_Localization{
 		state->G_p_I = old_state.G_p_I + dt * old_state.G_v_I + dt2_2 * (old_state.G_R_I * (imu_data->accel - old_state.ab) + g);
 		state->G_v_I = old_state.G_v_I + dt * (old_state.G_R_I * (imu_data->accel - old_state.ab) + g);
 
-		if (imu_data->quat.norm() != 0 && imu_data->last_quat.norm() != 0){
-			ROS_INFO("Updating orientation by quaternion");
+		//ROS_INFO("current quat norm = %f",imu_data->quat.norm());
+
+		if (imu_data->quat.norm() != 0 && state->last_quat.norm() != 0){
+			//ROS_INFO("Updating orientation by quaternion");
 			//quaternion valid, update orientation according to delta quaternion
-			Eigen::Matrix3d d_rot(imu_data->last_quat.inverse() * imu_data->quat);
+			Eigen::Matrix3d d_rot(state->last_quat.inverse() * imu_data->quat);
 
 			state->G_R_I = old_state.G_R_I * d_rot;
 			const Eigen::Vector3d d_theta = (- old_state.wb) * dt;
@@ -26,6 +28,7 @@ namespace ESKF_Localization{
 				state->G_R_I *= d_rot2.toRotationMatrix();
 			}
 		}else{
+
 			const Eigen::Vector3d d_theta = (imu_data->gyro - old_state.wb) * dt;
 			if (d_theta.norm() >= 1e-12){
 				Eigen::AngleAxisd d_rot(d_theta.norm(),d_theta.normalized());
@@ -35,7 +38,7 @@ namespace ESKF_Localization{
 
 		if(imu_data->quat.norm() != 0){
 			//current quaternion valid, haven't got last quaternion.
-			imu_data->last_quat = imu_data->quat;
+			state->last_quat = imu_data->quat;
 		}
 
 		//state->ab = old_state.ab;

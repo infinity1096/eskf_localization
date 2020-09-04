@@ -15,7 +15,7 @@ ESKFLocalizationWrapper::ESKFLocalizationWrapper(ros::NodeHandle nh){
 	double am_noise, wm_noise, ab_noise, wb_noise;
 	double x,y,z;
 
-	nh.param("am_noise", am_noise, 1e-2);
+	nh.param("am_noise", am_noise, 2e-2);
 	nh.param("wm_noise", wm_noise, 1e-4);
 	nh.param("ab_noise", ab_noise, 1e-6);
 	nh.param("wb_noise", wb_noise, 1e-6);
