@@ -46,13 +46,15 @@ void MagProcessor::Mag_correct(const MagDataPtr MagData, State* state){
 	I_R_G_mag.block<3,1>(0,1) = y_ref;
 	I_R_G_mag.block<3,1>(0,2) = z_ref;
 
-	G_R_I_mag = I_R_G_mag.transpose();
+	Eigen::Matrix3d declination_compensate = Eigen::AngleAxisd(state->magnetic_declination_deg * M_PI / 180.0,Eigen::Vector3d(0,0,1)).toRotationMatrix();
+
+	G_R_I_mag = declination_compensate * (I_R_G_mag.transpose());
 
 	//SLERP between state orientation and calculated absolute orientation
 	Eigen::Quaterniond q0(state->G_R_I);
 	Eigen::Quaterniond q1(G_R_I_mag);
 
-	ROS_INFO("q1 = %f,%f,%f,%f",q1.w(),q1.x(),q1.y(),q1.z());
+	//ROS_INFO("q1 = %f,%f,%f,%f",q1.w(),q1.x(),q1.y(),q1.z());
 
 	state->G_R_I = q0.slerp(0.03,q1).normalized().toRotationMatrix();
 

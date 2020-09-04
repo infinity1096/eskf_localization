@@ -20,6 +20,12 @@ Initializer::Initializer(int imu_initialize_goal, int gps_initialize_goal,int ma
 	state->P.block<3,3>(6,6) = 0.04 * Eigen::Matrix3d::Identity();		//roll-pitch-yaw cov
 	state->P.block<3,3>(9,9) = 0.0004 * Eigen::Matrix3d::Identity();	//acceleration bias cov
 	state->P.block<3,3>(12,12) = 0.0004 * Eigen::Matrix3d::Identity();	//gyroscope bias cov
+
+	state->magnetic_declination_deg = 7.19;//Beijing
+	//https://en.wikipedia.org/wiki/Magnetic_declination
+	//By convention, declination is positive when magnetic north is east of true north,
+	//and negative when it is to the west.
+
 }
 
 void Initializer::Imu_initialize(ESKF_Localization::ImuDataPtr imu_data){
@@ -93,8 +99,10 @@ void Initializer::Mag_initialize(ESKF_Localization::MagDataPtr mag_data){
 		I_R_G.block<3,1>(0,1) = y_ref;
 		I_R_G.block<3,1>(0,2) = z_ref;
 
-		//update state
-		state_->G_R_I = I_R_G.transpose();
+		Eigen::Matrix3d declination_compensate = Eigen::AngleAxisd(state_->magnetic_declination_deg * M_PI / 180.0,Eigen::Vector3d(0,0,1)).toRotationMatrix();
+
+		//update state, compensate magnetic declination
+		state_->G_R_I =  declination_compensate * (I_R_G.transpose());
 
 		//FIXME
 		Eigen::Quaterniond q(state_->G_R_I);

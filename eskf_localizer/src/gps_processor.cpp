@@ -13,7 +13,7 @@ namespace ESKF_Localization{
 
 GpsProcessor::GpsProcessor(Eigen::Vector3d I_p_Gps){
 	GpsProcessor::I_p_Gps_ = I_p_Gps;
-	air_pressure_filter_ = std::make_unique<AirpressureFilter>(0.05);
+	air_pressure_filter_ = std::make_unique<AirpressureFilter>(0.4);
 }
 
 void GpsProcessor::Gps_correct(const GpsPositionDataPtr GpsData, State* state){

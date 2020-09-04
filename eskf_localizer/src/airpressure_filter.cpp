@@ -14,7 +14,7 @@ void AirpressureFilter::correctHeight(Eigen::Vector3d* z, State* state){
 	double delta_height = current_pressure_height - state->last_pressure_height;
 	state->last_pressure_height = current_pressure_height;
 
-	ROS_INFO("current_pressure_height = %f, delta_height = %f, last_height = %f",current_pressure_height,delta_height,state->last_pressure_height );
+	//ROS_INFO("current_pressure_height = %f, delta_height = %f, above_origin = %f",current_pressure_height,delta_height,current_pressure_height-state->lla_origin.z());
 
 	//Complementary filter with GPS height
 	state->height_filtered = k_ * (z->z() + state->lla_origin.z()) + (1 - k_) * (state->height_filtered + delta_height);
@@ -23,7 +23,7 @@ void AirpressureFilter::correctHeight(Eigen::Vector3d* z, State* state){
 }
 
 double AirpressureFilter::calcPressureHeight(double air_pressure, double celsius, State* state){
-	ROS_INFO("pressure height calculated with p = %f , T = %f", air_pressure, celsius);
+	//ROS_INFO("pressure height calculated with p = %f , T = %f", air_pressure, celsius);
 	return ((pow((state->p0 / air_pressure), 1/5.257) - 1.0) * (celsius + 273.15)) / 0.0065;
 }
 double AirpressureFilter::calcP0(double air_pressure, double celsius, double GPS_height, State* state){

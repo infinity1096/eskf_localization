@@ -63,6 +63,7 @@ struct State{
 
 	Eigen::Vector3d m_ref;
 	//megnetic field reference
+	double magnetic_declination_deg;	//Unit: degrees
 
 	double p0;//sea-level pressure at lla_init with local air condition
 	double last_pressure_height;//last altitude calculated from air pressure and temperature
